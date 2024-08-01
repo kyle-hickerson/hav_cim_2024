@@ -1,0 +1,109 @@
+\documentclass[review, 3p,
+authoryear]{elsarticle} %review=doublespace preprint=single 5p=2 column
+%%% Begin My package additions %%%%%%%%%%%%%%%%%%%
+
+\usepackage[hyphens]{url}
+
+  \journal{Transportation Research Interdisciplinary
+Perspectives} % Sets Journal name
+
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%% end my additions to header
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+% TODO: Currently lineno needs to be loaded after amsmath because of conflict
+% https://github.com/latex-lineno/lineno/issues/5
+\usepackage{lineno} % add
+  \linenumbers % turns line numbering on
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \usepackage{fontspec}
+  \ifxetex
+    \usepackage{xltxtra,xunicode}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\usepackage[]{natbib}
+\bibliographystyle{elsarticle-harv}
+
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={HAVs Children 2024},
+            colorlinks=false,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+
+\setcounter{secnumdepth}{5}
+% Pandoc toggle for numbering sections (defaults to be off)
+
+
+% tightlist command for lists without linebreak
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+
+
+
+
+\begin{document}
+
+
+\begin{frontmatter}
+
+  \title{HAVs Children 2024}
+    \author[GMU]{Kyle Hickerson%
+  \corref{cor1}%
+  }
+   \ead{khicker@gmu.edu} 
+    \author[GMU]{Yi-Ching Lee%
+  %
+  }
+   \ead{ylee65@gmu.edu} 
+      \affiliation[GMU]{
+    organization={George Mason University},addressline={4400 University
+Dr},city={Fairfax},postcode={22030},state={VA},country={United States},}
+    \cortext[cor1]{Corresponding author}
+  
+  \begin{abstract}
+  Test Paragraph1 Test paragraph 2
+  \end{abstract}
+    \begin{keyword}
+    Childhood Independent Mobility \sep 
+    Automated Vehicle
+  \end{keyword}
+  
+ \end{frontmatter}
+
+\hypertarget{bibliography-styles}{%
+\section{Bibliography styles}\label{bibliography-styles}}
+
+Here are two sample references:
+\citeauthor{bennettsWhatInfluencesParents2018}
+\citetext{\citeyear{bennettsWhatInfluencesParents2018}; \citealp{williamsMethodVarianceMarker2010}}.
+
+\renewcommand\refname{References}
+\bibliography{s001.bib}
+
+
+\end{document}

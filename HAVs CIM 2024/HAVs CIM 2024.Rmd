@@ -1,0 +1,48 @@
+---
+title: HAVs Children 2024
+author:
+  - name: Kyle Hickerson
+    email: khicker@gmu.edu
+    affiliation: GMU
+    correspondingauthor: true
+    # footnote: 1
+  - name: Yi-Ching Lee
+    email: ylee65@gmu.edu
+    affiliation: GMU
+address:
+  - code: GMU
+    organization: George Mason University
+    addressline: 4400 University Dr
+    city: Fairfax
+    state: VA
+    postcode: 22030
+    country: United States
+    
+abstract: |
+ Test Paragraph1
+  Test paragraph 2
+keywords: 
+  - Childhood Independent Mobility
+  - Automated Vehicle
+journal: "Transportation Research Interdisciplinary Perspectives"
+date: "`r Sys.Date()`"
+linenumbers: true
+numbersections: true
+bibliography: s001.bib
+biblio-style: elsarticle-harv # author year style for natbib - use 'elsarticle-num' or 'elsarticle-num-names' for numbered scheme
+classoption: review, 3p, authoryear # remove authoryear is not using `elsarticle-harv`
+# Use a CSL with `citation_package = "default"`
+# csl: https://www.zotero.org/styles/elsevier-harvard
+output: 
+  rticles::elsevier_article:
+    keep_tex: true
+    citation_package: natbib
+---
+
+# Bibliography styles
+
+Here are two sample references: @bennettsWhatInfluencesParents2018 [@williamsMethodVarianceMarker2010].
+
+
+# References {-}
+
