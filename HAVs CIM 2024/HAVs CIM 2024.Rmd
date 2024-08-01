@@ -25,11 +25,13 @@ abstract: |
 keywords: 
   - Childhood Independent Mobility
   - Automated Vehicle
+  - Stuctural Equation Modeling
+  - Technolgy Acceptance Model
 journal: "Transportation Research Interdisciplinary Perspectives"
 date: "`r Sys.Date()`"
 linenumbers: true
 numbersections: true
-bibliography: s001.bib
+bibliography: citation_library.bib
 biblio-style: elsarticle-harv # author year style for natbib - use 'elsarticle-num' or 'elsarticle-num-names' for numbered scheme
 classoption: review, 3p, authoryear # remove authoryear is not using `elsarticle-harv`
 # Use a CSL with `citation_package = "default"`
@@ -39,11 +41,53 @@ output:
     keep_tex: true
     citation_package: natbib
 ---
+```{r include=FALSE}
+lib_names <- c("semTools", "vroom", "tidyverse", "manymome", 
+               "rstatix", "lavaanPlot", "devtools", "phantSEM", "influence.SEM",
+               "careless", "vroom")
+lapply(lib_names, install.packages, character.only = T)
+devtools::install_github("dustinfife/flexplot")
+devtools::install_github("dustinfife/flexplavaan")
+devtools::install_github("melissagwolf/dynamic")
+lapply(lib_names, library, character.only = T) 
+library(dynamic)
+library(flexplavaan)
+```
+```{r include = FALSE}
+# loading survey data
+survey <- vroom("hav_cim_2024_no_ip.csv")
+# loading demographic data
+demog <- vroom("hav_cim_2024_demographics.csv")
+# removing participants who did not finish
+demog <- demog[demog$Status == "AWAITING REVIEW",] 
+# getting ids of completed participants
+id <- demog$`Participant id`
+id <- as.factor(id)
+survey$prolific_id <- as.factor(survey$prolific_id)
+# removing survey respondents who were not paid
+survey <- survey[survey$prolific_id %in% id,]
+# removing duplicated ids
+survey$dup <- duplicated(survey$prolific_id)
+dup <- survey[survey$dup == TRUE,] 
+dup_id <- dup$prolific_id
+survey <- survey[survey$dup == FALSE,] 
+# testing if all survey ids match all ids from prolific
+survey<- survey[order(survey$prolific_id, decreasing = TRUE), ]
+demog<- demog[order(demog$`Participant id`, decreasing = TRUE), ]
+all(survey$prolific_id == demog$`Participant id`)
 
-# Bibliography styles
+```
+# Introduction
 
 Here are two sample references: @bennettsWhatInfluencesParents2018 [@williamsMethodVarianceMarker2010].
 
+# Methods
+
+# Results
+
+# Discussion
+
+# Conclusion
 
 # References {-}
 
