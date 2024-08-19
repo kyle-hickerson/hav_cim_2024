@@ -42,9 +42,9 @@ output:
     citation_package: natbib
 ---
 ```{r include=FALSE}
-lib_names <- c("semTools", "vroom", "tidyverse", "manymome", 
+lib_names <- c("semTools", "vroom", "tidyverse", "manymome", "rlang",
                "rstatix", "lavaanPlot", "devtools", "phantSEM", "influence.SEM",
-               "careless", "vroom")
+               "careless", "vroom", "mirt")
 lapply(lib_names, install.packages, character.only = T)
 devtools::install_github("dustinfife/flexplot")
 devtools::install_github("dustinfife/flexplavaan")
@@ -53,6 +53,83 @@ lapply(lib_names, library, character.only = T)
 library(dynamic)
 library(flexplavaan)
 ```
+
+```{r}
+k_local <- function(fit, minimum_value){
+  minimum_value <- 0.1
+  temp <- lavResiduals(fit)
+  temp <- temp$cov
+  temp <- round(temp,2)
+  temp[upper.tri(temp)] <- NA
+  diag(temp) <- NA
+  temp <- cor_gather(temp)
+  temp <- temp %>% filter(cor >= minimum_value | cor <= -minimum_value)
+  temp <- temp %>% arrange(desc(abs(cor)), var1, desc(var2))
+  #temp2 <- temp %>% group_by(var1) %>% summarise(mean_residual = mean(cor))
+  #temp2 <- temp2[order(abs(temp2$mean_residual),decreasing = T),]
+  #raw <- as.data.frame(temp)
+  #items <- as.data.frame(temp2)
+  #print(temp2, n = 20)
+  print(temp, n= 20)
+  mod <- modificationindices(fit, minimum.value = 10, sort. = T)
+  print(mod)
+  
+  freq1 <- as.data.frame(summary(as.factor(temp$var1)))
+  freq1$items <- row.names(freq1)
+  colnames(freq1) <- c("frequency", "items")
+  freq1 <- freq1[order(abs(freq1$frequency),decreasing = T),]
+  
+  freq2 <- as.data.frame(summary(as.factor(temp$var2)))
+  freq2$items <- row.names(freq2)
+  colnames(freq2) <- c("frequency", "items")
+  freq2 <- freq2[order(abs(freq2$frequency),decreasing = T),]
+  
+  
+  print(ggplot(data = freq1, aes(x=items, y=frequency)) + 
+    geom_bar(stat="identity", colour="black", fill="white") + 
+    xlab("") + ylab("") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    geom_text(aes(label = signif(frequency)), nudge_y = 0.2))
+  print(ggplot(data = freq2, aes(x=items, y=frequency)) + 
+    geom_bar(stat="identity", colour="black", fill="white") + 
+    xlab("") + ylab("") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    geom_text(aes(label = signif(frequency)), nudge_y = 0.2))
+}
+
+k_residual <- function(fit, minimum_value){
+  minimum_value <- 0.1
+  temp <- lavResiduals(fit)
+  temp <- temp$cov
+  temp <- round(temp,2)
+  temp[upper.tri(temp)] <- NA
+  diag(temp) <- NA
+  temp <- cor_gather(temp)
+  
+}
+
+k_agr_disag_relab <- function(x) {
+  agree_disagree_labs = c("Strongly disagree", 
+                          "Disagree",
+                          "Slightly disagree",
+                          "Neutral", 
+                          "Slightly agree", 
+                          "Agree", 
+                          "Strongly agree")
+  factor(x, labels = 1:7, levels = agree_disagree_labs)
+}
+
+k_freq_relab <- function(x) {
+  freq_labs = c('Never', 
+               'Rarely (< 10% of the time)',
+               'Occasionally (about 30% of the time)',
+               'Sometimes (about 50% of the time)',
+               'Frequently (about 70% of the time)',
+               'Usually (about 90% of the time)',
+               'Every time')
+  x <- factor(x, labels = 1:7, levels = freq_labs)
+}
+
+```
+
 ```{r include = FALSE}
 # loading survey data
 survey <- vroom("hav_cim_2024_no_ip.csv")
@@ -75,6 +152,36 @@ survey <- survey[survey$dup == FALSE,]
 survey<- survey[order(survey$prolific_id, decreasing = TRUE), ]
 demog<- demog[order(demog$`Participant id`, decreasing = TRUE), ]
 all(survey$prolific_id == demog$`Participant id`)
+# making dataframe for analysis
+df <- cbind(demog, survey)
+#remove duplicate column that breaks dplyr
+df <- df[,-30]
+
+```
+
+```{r include=FALSE}
+# removing participants who fail both attention checks
+df <- df %>% filter(attention1 == "Somewhat agree") %>% 
+  filter(attention2 == "Monday")
+
+df2 <- df
+# converting likert items to factors
+df2[,55:120] <- lapply(df2[,55:120], factor)
+```
+
+```{r echo=FALSE}
+# converting likert labels to numeric values
+df2[,55:60] <- lapply(df2[55:60], k_freq_relab)
+#df2[,61:120] <- lapply(df2[61:120], k_agr_disag_relab)
+head(df2$cim_public_1)
+
+df2[, 61:120] <- lapply(df2[,61:120], k_agr_disag_relab)
+head(df2$par_fear_1)
+#head(df2[,55])
+comp <- cbind(df2[,55], df[,55], df2[,56], df[,56], df2[,57], df[,57])
+
+
+
 
 ```
 # Introduction
